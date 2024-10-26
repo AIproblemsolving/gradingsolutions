@@ -1,16 +1,38 @@
 import streamlit as st
 import requests
+import numpy as np
+from security import get_api_key_user
+
 
 def handle_form_submission():
-    st.success("Both password and API key have been successfully verified!")
-    
+
     # Dropdown menu options
-    menu_options = ["Level 1", "Level 1.5", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"]
+    menu_options = ["Choose Level to Grade", "Level 1", "Level 1.5", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6"]
+
+    # Motivation messages should be a 1D array or list
+    motiv_messages = np.array([
+        "Na"
+        "PROCEED TO BUILDING YOUR LTPI",
+        "PROCEED TO BUILDING YOUR MTPI",
+        "PROCEED TO BUILDING YOUR RSPS",
+        "PROCEED TO THE INFAMOUS VALLEY OF DESPAIR",
+        "PROCEED TO BUILDING YOUR SOPS",
+        "PROVE YOUR WORTH!",
+        "Na"
+    ])
+
+    # Get Grader
+    grader = get_api_key_user(st.session_state.api_key)
+
+    # Dropdown to select the level
     selected_option = st.selectbox("Choose an option", menu_options, key="selected_option")
 
     # Get the index of the selected option
     current_index = menu_options.index(selected_option)
-    
+
+    # Get the motivation message based on the selected level
+    motiv_message = motiv_messages[current_index]
+
     # Determine the next level (if the current index is not the last one)
     next_level = None
     if current_index < len(menu_options) - 1:
@@ -22,14 +44,40 @@ def handle_form_submission():
     with st.form(key="submission_form"):
         student_id = st.text_input("Student ID", value="", key="student_id")
         attempt = st.number_input("Attempt", min_value=1, step=1, key="attempt")
-        result = st.selectbox("Result", ["PASS", "FAIL", "NUKE"], key="result")
-        timeout = st.selectbox("Timeout", ["None", "24H", "48H", "72H"], key="timeout")
-
+        
+        # Mimicking horizontal sliders with radio buttons
+        result = st.radio(
+            "Result",
+            options=["PASS", "FAIL", "NUKE"],
+            horizontal=True,
+            key="result"
+        )
+        
+        timeout = st.radio(
+            "Timeout",
+            options=["None", "24H", "48H", "72H"],
+            horizontal=True,
+            key="timeout"
+        )
+        
+        # Submit button for the form
         submit_button = st.form_submit_button("Submit")
 
         if submit_button:
+            if selected_option == "Choose Level to Grade":
+                st.warning("Which Level are you Grading?")
+                st.stop()
+            
+            if not student_id or attempt < 1 or not result or not timeout:
+                st.warning("All fields must be filled out. Please check your inputs.")
+                st.stop()
+
+        if submit_button:
+            if result == "PASS":
+                timeout = "None"
+
             data = {
-                'grader' : "admin",
+                'grader' : grader,
                 'level': selected_option,
                 'id': student_id,
                 'attempt': attempt,
@@ -48,7 +96,7 @@ def handle_form_submission():
                 if result in ["FAIL", "NUKE"]:
                     message = f"""
 <@{student_id}>
-**UID: {student_id}**  
+**UID:** {student_id}  
 **Attempt:** {attempt}  
 **Result:** **{result}**  
 **Timeout:** {timeout}  
@@ -62,7 +110,7 @@ def handle_form_submission():
                 elif result == "PASS":
                     message = f"""
 <@{student_id}>
-**UID: {student_id}**  
+**UID:** {student_id}  
 **Attempt:** {attempt}  
 **Result:** **{result}**  
 
@@ -70,6 +118,7 @@ def handle_form_submission():
 -> 
 
 **🔥🔥🔥 {next_level} IS YOURS 🔥🔥🔥**
+**{motiv_message}**
 """
                     st.code(message, language='markdown')
             else:
