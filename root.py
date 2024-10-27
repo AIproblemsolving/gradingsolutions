@@ -1,10 +1,9 @@
 import streamlit as st
 from security import check_password, check_api_key
-from layout import create_header, set_background, emptylines, hide_st
+from layout import create_header, set_background, emptylines
 from form_handler import handle_form_submission
 
 # Set up layout and background
-#hide_st()
 create_header()
 set_background()
 emptylines()
