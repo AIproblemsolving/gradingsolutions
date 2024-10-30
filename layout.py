@@ -23,7 +23,7 @@ def create_header():
         }
         </style>
         <div class="header">
-            Grading Assistant (Beta)
+            Grading Assistant
         </div>
         """, unsafe_allow_html=True)
 
