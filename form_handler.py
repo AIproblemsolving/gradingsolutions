@@ -120,7 +120,7 @@ def handle_form_submission():
     -> 
     
     **🔥🔥🔥 {next_level} IS YOURS 🔥🔥🔥**
-    **{motiv_message}**
+    {motiv_message}
     """
                         st.code(message, language='markdown')
                 else:
