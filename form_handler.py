@@ -23,10 +23,17 @@ def handle_form_submission():
         "PROVIDE PROOF OF PASSING L2 TO GET L3 ROLE",
         "PROVIDE PROOF OF PASSING L1.5 TO GET L3 ROLE",
         "PROCEED TO THE INFAMOUS VALLEY OF DESPAIR",
-        "PROCEED TO BUILDING YOUR SOPS",
+        "Na",
         "PROVE YOUR WORTH!",
         "Na"
     ])
+
+    L4_options = ["BTC", "ETH", "ALT"]
+    L4_motiv_messages = [
+        "PROCEED TO BUILDING YOUR ETH STRATEGY",
+        "PROCEED TO BUILDING YOUR ALT STRATEGY",
+        "PROCEED TO BUILDING YOUR SOPS"
+    ]
 
     # Get Grader
     grader = get_api_key_user(st.session_state.api_key)
@@ -53,6 +60,14 @@ def handle_form_submission():
         with st.form(key="submission_form"):
             student_id = st.text_input("Student ID", value="", key="student_id")
             attempt = st.number_input("Attempt", min_value=1, step=1, key="attempt")
+
+            if selected_option == "Level 4":
+                L4_asset = st.radio(
+                    "Asset",
+                    options=L4_options,
+                    horizontal=True,
+                    key="asset"
+                )
             
             # Mimicking horizontal sliders with radio buttons
             result = st.radio(
@@ -84,10 +99,19 @@ def handle_form_submission():
             if submit_button:
                 if result == "PASS":
                     timeout = "None"
-    
+
+                graded_level = selected_option
+
+                if selected_option == "Level 4":
+                    graded_level = str(selected_option) + " - " + str(L4_asset)
+                    # Handle L4 message
+                    if result == "PASS":
+                        L4_index = L4_options.index(L4_asset)
+                        L4_motiv_message = L4_motiv_messages[L4_index]
+
                 data = {
                     'grader' : grader,
-                    'level': selected_option,
+                    'level': graded_level,
                     'id': student_id,
                     'attempt': attempt,
                     'result': result,
@@ -102,33 +126,68 @@ def handle_form_submission():
                     st.session_state.form_submitted = True
                     st.success('Data sent successfully!')
     
-                    if result in ["FAIL", "NUKE"]:
+
+                    # L4 Special
+                    if selected_option == "Level 4":
+                        if result in ["FAIL", "NUKE"]:
+                            message = f"""
+
+<@{student_id}>
+**UID:** {student_id}
+**Asset:** {L4_asset}  
+**Attempt:** {attempt}  
+**Result:** **{result}**  
+**Timeout:** {timeout}  
+    
+**Feedback:** 
+-> 
+    
+***Keep in mind once we identify an issue we stop the grading there and don't go any further not to waste our time. So double check everything is good before resub!***
+"""
+                            st.code(message, language='markdown')
+                            
+                        elif result == "PASS":
+                            message = f"""
+<@{student_id}>
+**UID:** {student_id}
+**Asset:** {L4_asset}   
+**Attempt:** {attempt}  
+**Result:** **{result}**  
+    
+**Feedback:** 
+-> 
+    
+**🔥🔥🔥 {L4_motiv_message} 🔥🔥🔥**
+"""
+                            st.code(message, language='markdown')
+                    # Other Levels
+                    elif result in ["FAIL", "NUKE"]:
                         message = f"""
-    <@{student_id}>
-    **UID:** {student_id}  
-    **Attempt:** {attempt}  
-    **Result:** **{result}**  
-    **Timeout:** {timeout}  
+<@{student_id}>
+**UID:** {student_id}  
+**Attempt:** {attempt}  
+**Result:** **{result}**  
+**Timeout:** {timeout}  
     
-    **Feedback:** 
-    -> 
+**Feedback:** 
+-> 
     
-    ***Keep in mind once we identify an issue we stop the grading there and don't go any further not to waste our time. So double check everything is good before resub!***
-    """
+***Keep in mind once we identify an issue we stop the grading there and don't go any further not to waste our time. So double check everything is good before resub!***
+"""
                         st.code(message, language='markdown')
                     elif result == "PASS":
                         message = f"""
-    <@{student_id}>
-    **UID:** {student_id}  
-    **Attempt:** {attempt}  
-    **Result:** **{result}**  
+<@{student_id}>
+**UID:** {student_id}  
+**Attempt:** {attempt}  
+**Result:** **{result}**  
     
-    **Feedback:** 
-    -> 
+**Feedback:** 
+-> 
     
-    **🔥🔥🔥 {next_level} IS YOURS 🔥🔥🔥**
-    {motiv_message}
-    """
+**🔥🔥🔥 {next_level} IS YOURS 🔥🔥🔥**
+{motiv_message}
+"""
                         st.code(message, language='markdown')
                 else:
                     st.error(f'Failed to send data: {response.status_code} - {response.text}')
