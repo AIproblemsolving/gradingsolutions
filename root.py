@@ -8,7 +8,6 @@ hide_st()
 create_header()
 set_background()
 emptylines()
-st.markdown("---")
 
 # Initial session state setup
 if "password_verified" not in st.session_state:
@@ -56,7 +55,7 @@ if st.session_state.password_verified and not st.session_state.api_key_verified:
             st.session_state.api_key = api_key  # Store the verified API key
             st.session_state.show_api_key_success = True
         else:
-            st.error("Invalid API key!")
+            st.error("Invalid API key! Make sure there are no spaces before or after the API key.")
 
 # Show API key success message if needed
 if st.session_state.show_api_key_success:
@@ -67,6 +66,14 @@ if st.session_state.show_api_key_success:
 # Handle form submission when both password and API key are verified
 if st.session_state.password_verified and st.session_state.api_key_verified:
     if "api_key" in st.session_state:
+
+        update_logs = st.expander(":construction: Update Logs")
+        update_logs.markdown("""
+* 30.10.2024 | v1.0 launch
+* 04.11.2024 | v1.1 - Added L4 Asset options in the form.
+""")
+        st.markdown("---")
+        
         handle_form_submission()
     else:
         st.error("API key is missing. Please re-enter the API key.")
