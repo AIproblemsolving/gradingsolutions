@@ -16,7 +16,7 @@ def create_header():
             left: 0;
             z-index: 1000;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-top: 15px; /* Tiny space above the text */
+            margin-top: 0px; /* Tiny space above the text */
         }
         .stApp {
             padding-top: 80px;
