@@ -24,8 +24,6 @@ def check_password(input_password):
 
 def check_api_key(input_api_key):
     hashed = hash_input(input_api_key)
-    st.write("Hashed input:", hashed)
-    st.write("Expected hash:", hashed_api_keys[-1])
     return hashed in hashed_api_keys
 
 def api_key_index(input_api_key):
