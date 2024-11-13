@@ -1,4 +1,5 @@
 import hashlib
+import streamlit
 
 hashed_password = "b8ea7b7963a0fa7baaf4d71f4f0dc75a42aa7e4e1f3a406c809ca5b16ac7e9ab"
 hashed_api_keys = [
@@ -22,7 +23,10 @@ def check_password(input_password):
     return hash_input(input_password) == hashed_password
 
 def check_api_key(input_api_key):
-    return hash_input(input_api_key) in hashed_api_keys
+    hashed = hash_input(input_api_key)
+    st.write("Hashed input:", hashed)
+    st.write("Expected hash:", hashed_api_keys[-1])
+    return hashed in hashed_api_keys
 
 def api_key_index(input_api_key):
     hashed_input = hash_input(input_api_key)
