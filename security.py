@@ -1,5 +1,5 @@
 import hashlib
-import streamlit
+import streamlit as st
 
 hashed_password = "b8ea7b7963a0fa7baaf4d71f4f0dc75a42aa7e4e1f3a406c809ca5b16ac7e9ab"
 hashed_api_keys = [
