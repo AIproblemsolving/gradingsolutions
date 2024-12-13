@@ -6,14 +6,16 @@ hashed_api_keys = [
     "e08238f0174d5c63c56780b1e0587fcb123f4d3441a9008c973e9177c1dffd97",
     "0d4ca4d734049d4c5f0cc6cb5928492a3ad85068de45e0cdbadefbe1af37545e",
     "b27e587b8a57fb8bbb8c57e51d229884366a14e29e54d64974871b4c13c4d810",
-    "92606d3bff0f4253a7cae3b4421255e69735d5a198668a3dc33a573410285432"
+    "92606d3bff0f4253a7cae3b4421255e69735d5a198668a3dc33a573410285432",
+    "a09cb105d3ad91fae4b26dd3fba568dabae179e6ce1ef8b07397176da82c7e5d"
 ]
 
 api_key_user = [
     "admin",
     "beta.user",
     "NewAPI.Test",
-    "browno"
+    "browno",
+    "natt"
 ]
 
 def hash_input(input_text):
